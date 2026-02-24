@@ -1,0 +1,18 @@
+{
+  "contactos": [
+    {
+      "id": "4e7e",
+      "nombre": "Steveen",
+      "telefono": "3137053041",
+      "correo": "juan@gmail",
+      "etiqueta": "estudiante"
+    },
+    {
+      "id": "2715",
+      "nombre": "Yeisons",
+      "telefono": "3137053041",
+      "correo": "negrojuan@gmail.com",
+      "etiqueta": "estudiante"
+    }
+  ]
+}
