@@ -3,7 +3,7 @@
 
 // URL base del backend local de Agenda ADSO.
 // Si cambia el puerto o la ruta, solo se modifica aquí.
-export const API_BASE_URL = "https://69a1c0d6f7f5e512ebf32190--musical-marigold-58b9c9.netlify.app/";
+export const API_BASE_URL = "http://localhost:3002";
 
 // Información general de la aplicación que se utilizará en App.jsx
 export const APP_INFO = {
