@@ -1,18 +1,27 @@
-// Importamos useEffect y useState para manejar estados y efectos en el componente principal
+// Archivo: src/App.jsx
+// Componente principal de la aplicación Agenda ADSO.
+// Se encarga de:
+// - Cargar la lista de contactos desde la API.
+// - Manejar estados globales (contactos, carga, error).
+// - Conectar el formulario y las tarjetas de contactos.
+
+// Importamos hooks de React
 import { useEffect, useState } from "react";
 
-// Importamos los servicios que se comunican con JSON Server
+// Importamos las funciones de la API (capa de datos)
 import {
   listarContactos,
   crearContacto,
   eliminarContactoPorId,
 } from "./api";
 
-// Importamos los componentes hijos
+// Importamos la configuración global de la aplicación
+import { APP_INFO } from "./config";
+
+// Importamos componentes hijos
 import FormularioContacto from "./components/FormularioContacto";
 import ContactoCard from "./components/ContactoCard";
 
-// Componente principal de la aplicación
 function App() {
   // Estado que almacena la lista de contactos obtenidos de la API
   const [contactos, setContactos] = useState([]);
@@ -23,8 +32,8 @@ function App() {
   // Estado para guardar mensajes de error generales de la aplicación
   const [error, setError] = useState("");
 
-  // useEffect que se ejecuta una sola vez al montar el componente
-  // Aquí cargamos los contactos iniciales desde JSON Server
+  // useEffect que se ejecuta una sola vez al montar el componente.
+  // Aquí cargamos los contactos iniciales desde JSON Server (GET).
   useEffect(() => {
     const cargarContactos = async () => {
       try {
@@ -49,31 +58,32 @@ function App() {
     cargarContactos();
   }, []);
 
-  // Función que se encarga de agregar un nuevo contacto usando la API
-  // Esta función es async para poder usarla con await en el formulario
+  // Función que se encarga de agregar un nuevo contacto usando la API (POST)
   const onAgregarContacto = async (nuevoContacto) => {
-  try {
-    setError("");
+    try {
+      // Limpiamos cualquier error previo antes de intentar guardar
+      setError("");
 
-    // ⏳ Simulamos un tiempo real de guardado (UX realista)
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+      // Llamamos al servicio que crea el contacto en JSON Server
+      const creado = await crearContacto(nuevoContacto);
 
-    const creado = await crearContacto(nuevoContacto);
+      // Actualizamos el estado agregando el contacto recién creado a la lista
+      setContactos((prev) => [...prev, creado]);
+    } catch (error) {
+      // Mostramos el error en consola para facilitar la depuración
+      console.error("Error al crear contacto:", error);
 
-    setContactos((prev) => [...prev, creado]);
+      // Si falla la creación, mostramos un mensaje claro y útil
+      setError(
+        "No se pudo guardar el contacto. Verifica tu conexión o el estado del servidor e intenta nuevamente."
+      );
 
-    // IMPORTANTE: retornamos el contacto creado
-    return creado;
-  } catch (error) {
-    console.error("Error al crear contacto:", error);
-    setError(
-      "No se pudo guardar el contacto. Verifica tu conexión o el estado del servidor e intenta nuevamente."
-    );
-    throw error;
-  }
-};
+      // Relanzar el error es opcional, pero útil si el formulario quiere reaccionar
+      throw error;
+    }
+  };
 
-  // Función para eliminar un contacto por su id
+  // Función para eliminar un contacto por su id (DELETE)
   const onEliminarContacto = async (id) => {
     try {
       setError(""); // Limpiamos errores previos
@@ -92,22 +102,21 @@ function App() {
     }
   };
 
-  // JSX que renderiza la aplicación
+  // JSX que renderiza toda la aplicación
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Contenedor principal centrado */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Encabezado principal de la Agenda */}
+        {/* Encabezado principal de la Agenda usando la configuración global */}
         <header className="mb-8">
           <p className="text-xs tracking-[0.3em] text-gray-500 uppercase">
-            Desarrollo Web ReactJS Ficha 3223876
+            Desarrollo Web ReactJS Ficha {APP_INFO.ficha}
           </p>
           <h1 className="text-4xl font-extrabold text-gray-900 mt-2">
-            Agenda ADSO v6
+            {APP_INFO.titulo}
           </h1>
           <p className="text-sm text-gray-600 mt-1">
-            Gestión de contactos conectada a una API local con JSON Server,
-            ahora con validaciones y mejor experiencia de usuario.
+            {APP_INFO.subtitulo}
           </p>
         </header>
 
