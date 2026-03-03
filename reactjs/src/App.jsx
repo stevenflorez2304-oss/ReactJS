@@ -7,8 +7,8 @@ import { listarContactos, crearContacto, eliminarContactoPorId } from "./api";
 import { APP_INFO } from "./config";
 
 // Importamos componentes hijos
-import FormularioContacto from "./components/formularioContacto";
-import ContactoCard from "./components/contactoCard";
+import FormularioContacto from "./components/FormularioContacto";
+import ContactoCard from "./components/ContactoCard";
 
 function App() {
   // Estado que almacena la lista de contactos obtenidos de la API
