@@ -15,18 +15,25 @@
       "etiqueta": "estudiante"
     },
     {
-      "id": "fdfa",
-      "nombre": "Steveen",
-      "telefono": "3132025694",
-      "correo": "juan@gmail",
-      "etiqueta": "Trabajador"
-    },
-    {
       "id": "ec1a",
       "nombre": "juliana",
       "telefono": "3132025694",
       "correo": "nsajncjoacn@gmail.com",
       "etiqueta": "estudiante"
+    },
+    {
+      "id": "e9c3",
+      "nombre": "Mariana ",
+      "telefono": "4525327",
+      "correo": "asvcs@gmail.com",
+      "etiqueta": "estudiante"
+    },
+    {
+      "id": "6f49",
+      "nombre": "Perez",
+      "telefono": "3137054282",
+      "correo": "negrojuan@gmail.com",
+      "etiqueta": "Trabajador"
     }
   ]
 }

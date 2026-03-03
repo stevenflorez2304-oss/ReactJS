@@ -1,26 +1,14 @@
-// Archivo: src/App.jsx
-// Componente principal de la aplicación Agenda ADSO.
-// Se encarga de:
-// - Cargar la lista de contactos desde la API.
-// - Manejar estados globales (contactos, carga, error).
-// - Conectar el formulario y las tarjetas de contactos.
-
-// Importamos hooks de React
 import { useEffect, useState } from "react";
 
 // Importamos las funciones de la API (capa de datos)
-import {
-  listarContactos,
-  crearContacto,
-  eliminarContactoPorId,
-} from "./api";
+import { listarContactos, crearContacto, eliminarContactoPorId } from "./api";
 
 // Importamos la configuración global de la aplicación
 import { APP_INFO } from "./config";
 
 // Importamos componentes hijos
-import FormularioContacto from "./components/FormularioContacto";
-import ContactoCard from "./components/ContactoCard";
+import FormularioContacto from "./components/formularioContacto";
+import ContactoCard from "./components/contactoCard";
 
 function App() {
   // Estado que almacena la lista de contactos obtenidos de la API
@@ -48,7 +36,7 @@ function App() {
 
         // Y mostramos un mensaje amigable al usuario
         setError(
-          "No se pudieron cargar los contactos. Verifica que el servidor esté encendido e intenta de nuevo."
+          "No se pudieron cargar los contactos. Verifica que el servidor esté encendido e intenta de nuevo.",
         );
       } finally {
         setCargando(false); // Finalizamos el estado de carga
@@ -75,7 +63,7 @@ function App() {
 
       // Si falla la creación, mostramos un mensaje claro y útil
       setError(
-        "No se pudo guardar el contacto. Verifica tu conexión o el estado del servidor e intenta nuevamente."
+        "No se pudo guardar el contacto. Verifica tu conexión o el estado del servidor e intenta nuevamente.",
       );
 
       // Relanzar el error es opcional, pero útil si el formulario quiere reaccionar
@@ -97,37 +85,44 @@ function App() {
 
       // Si algo falla al eliminar, informamos al usuario
       setError(
-        "No se pudo eliminar el contacto. Vuelve a intentarlo o verifica el servidor."
+        "No se pudo eliminar el contacto. Vuelve a intentarlo o verifica el servidor.",
       );
     }
   };
 
+  // Estado para el término de búsqueda
+  const [busqueda, setBusqueda] = useState("");
+  // Estado para el orden: true = A-Z, false = Z-A
+  const [ordenAsc, setOrdenAsc] = useState(true);
+
   // Filtramos la lista original según el término de búsqueda
-const contactosFiltrados = contactos.filter((c) => {
-  const termino = busqueda.toLowerCase();
+  const contactosFiltrados = contactos.filter((c) => {
+    const termino = busqueda.toLowerCase();
+    // Normalizamos texto a minúsculas para comparar sin problemas
+    const nombre = c.nombre.toLowerCase();
+    const correo = c.correo.toLowerCase();
+    const etiqueta = (c.etiqueta || "").toLowerCase();
+    const telefono = c.telefono
+    // Incluimos el contacto si el término aparece en alguno de estos campos
+    return (
+      nombre.includes(termino) ||
+      correo.includes(termino) ||
+      etiqueta.includes(termino) ||
+      telefono.includes(termino)
+    );
+  });
 
-  // Normalizamos texto a minúsculas para comparar sin problemas
-  const nombre = c.nombre.toLowerCase();
-  const correo = c.correo.toLowerCase();
-  const etiqueta = (c.etiqueta || "").toLowerCase();
+  // Ordenamos los contactos filtrados por nombre
+  const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
+    const nombreA = a.nombre.toLowerCase();
+    const nombreB = b.nombre.toLowerCase();
+    if (nombreA < nombreB) return ordenAsc ? -1 : 1;
+    if (nombreA > nombreB) return ordenAsc ? 1 : -1;
+    return 0;
+  });
 
-  // Incluimos el contacto si el término aparece en alguno de estos campos
-  return (
-    nombre.includes(termino) ||
-    correo.includes(termino) ||
-    etiqueta.includes(termino)
-  );
-});
-
-// Ordenamos los contactos filtrados por nombre
-const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
-  const nombreA = a.nombre.toLowerCase();
-  const nombreB = b.nombre.toLowerCase();
-
-  if (nombreA < nombreB) return ordenAsc ? -1 : 1;
-  if (nombreA > nombreB) return ordenAsc ? 1 : -1;
-  return 0;
-});
+  const totalVisibles = contactosOrdenados.length;
+  const mensajeCantidad = totalVisibles === 1 ? "Mostrando un contacto" : `mostrando ${totalVisibles} contactos`
 
 
 
@@ -144,9 +139,7 @@ const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
           <h1 className="text-4xl font-extrabold text-gray-900 mt-2">
             {APP_INFO.titulo}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
-            {APP_INFO.subtitulo}
-          </p>
+          <p className="text-sm text-gray-600 mt-1">{APP_INFO.subtitulo}</p>
         </header>
 
         {/* Si hay un error global, lo mostramos en un recuadro rojo */}
@@ -164,24 +157,49 @@ const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
             {/* Formulario para crear nuevos contactos */}
             <FormularioContacto onAgregar={onAgregarContacto} />
 
+
+
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+              <p className="text-lg font-semibold text-gray-900 mb-2">Buscador</p>
+              <input
+                type="text"
+                className="w-full md:flex-1 rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500 text-sm"
+                placeholder="Buscar por nombre, correo, telefono o etiqueta..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+
+              <button
+                type="button"
+                className="bg-gray-100 text-gray-700 text-sm px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-200"
+              >
+                {mensajeCantidad}
+              </button>
+
+
+              <button
+                type="button"
+                onClick={() => setOrdenAsc((prev) => !prev)}
+                className="bg-gray-100 text-gray-700 text-sm px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-200"
+              >
+                {ordenAsc ? "Ordenar Z-A" : "Ordenar A-Z"}
+              </button>
+            </div>
+
             {/* Listado de contactos */}
             <section className="space-y-4">
-              {contactos.length === 0 ? (
-                // Mensaje cuando no existen contactos aún
+              {contactosOrdenados.length === 0 ? (
                 <p className="text-sm text-gray-500">
-                  Aún no tienes contactos registrados. Agrega el primero usando
-                  el formulario superior.
+                  No se encontraron contactos que coincidan con la búsqueda.
                 </p>
               ) : (
-                // Recorremos la lista de contactos y mostramos una tarjeta por cada uno
-                contactos.map((c) => (
+                contactosOrdenados.map((c) => (
                   <ContactoCard
-                    key={c.id} // Key única para cada elemento de la lista
+                    key={c.id}
                     nombre={c.nombre}
                     telefono={c.telefono}
                     correo={c.correo}
                     etiqueta={c.etiqueta}
-                    // onEliminar es una función que llama a onEliminarContacto con el id
                     onEliminar={() => onEliminarContacto(c.id)}
                   />
                 ))

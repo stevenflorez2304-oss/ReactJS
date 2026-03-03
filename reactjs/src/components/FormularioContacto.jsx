@@ -1,11 +1,7 @@
-// Importamos React y el hook useState para manejar estados locales del componente
 import { useState } from "react";
 
-// Componente FormularioContacto
-// Recibe como props la función onAgregar (para crear un contacto)
-// y la variable cargandoDesdeApp (si quieres reutilizar estados desde App, opcional)
-function FormularioContacto({ onAgregar }) {
-  // Estado principal del formulario: almacena los valores de cada campo
+export default function FormularioContacto({ onAgregar }) {
+  // Estado del formulario como objeto único controlado
   const [form, setForm] = useState({
     nombre: "",
     telefono: "",
@@ -24,14 +20,9 @@ function FormularioContacto({ onAgregar }) {
   // Sirve para desactivar el botón y mostrar un texto diferente
   const [enviando, setEnviando] = useState(false);
 
-  // Función manejadora del cambio de los inputs
-  // Se ejecuta cada vez que el usuario escribe en un campo
+  // onChange genérico: actualiza el campo según "name"
   const onChange = (e) => {
-    // Extraemos el nombre y el valor del input que disparó el evento
     const { name, value } = e.target;
-
-    // Actualizamos el estado del formulario, manteniendo lo anterior
-    // y solo cambiando la propiedad correspondiente (nombre, telefono, correo o etiqueta)
     setForm((prevForm) => ({
       ...prevForm,
       [name]: value,
@@ -54,6 +45,13 @@ function FormularioContacto({ onAgregar }) {
     // Validación del campo "telefono"
     if (!form.telefono.trim()) {
       nuevosErrores.telefono = "El teléfono es obligatorio.";
+    } //Validacion 7 caracteres numero de telefono
+    else if (form.telefono.length < 7) {
+      nuevosErrores.telefono =
+        "El numero de telefono debe tener minimo 7 digitos";
+    } else if (isNaN(form.telefono)) {
+      nuevosErrores.telefono =
+        "El numero telefonico solo debe contener numeros";
     }
 
     // Validación del campo "correo"
@@ -71,18 +69,13 @@ function FormularioContacto({ onAgregar }) {
 
     // Retornamos true SOLO si no hay mensajes de error en ninguno de los campos
     return (
-      !nuevosErrores.nombre &&
-      !nuevosErrores.telefono &&
-      !nuevosErrores.correo
+      !nuevosErrores.nombre && !nuevosErrores.telefono && !nuevosErrores.correo
     );
   }
 
-  // Función manejadora del envío del formulario
-  // Es async porque puede llamar a una función onAgregar que se comunique con la API
+  // onSubmit: valida mínimos y llama al padre
   const onSubmit = async (e) => {
-    // Evitamos que el formulario recargue la página por defecto
-    e.preventDefault();
-
+    e.preventDefault(); // Evita recarga de la página
     // Ejecutamos la validación. Si no es válida, salimos y no guardamos el contacto
     const esValido = validarFormulario();
     if (!esValido) return;
@@ -136,8 +129,8 @@ function FormularioContacto({ onAgregar }) {
           className="w-full rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500"
           name="nombre"
           placeholder="Ej: Camila Pérez"
-          value={form.nombre}    // El valor mostrado viene del estado form.nombre
-          onChange={onChange}    // Al escribir, actualizamos el estado
+          value={form.nombre} // El valor mostrado viene del estado form.nombre
+          onChange={onChange} // Al escribir, actualizamos el estado
         />
         {/* Si existe un mensaje en errores.nombre, lo mostramos debajo del input */}
         {errores.nombre && (
@@ -154,7 +147,7 @@ function FormularioContacto({ onAgregar }) {
           className="w-full rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500"
           name="telefono"
           placeholder="Ej: 300 123 4567"
-          value={form.telefono}  // Valor controlado desde form.telefono
+          value={form.telefono} // Valor controlado desde form.telefono
           onChange={onChange}
         />
         {/* Mensaje de error específico para el campo teléfono */}
@@ -172,7 +165,7 @@ function FormularioContacto({ onAgregar }) {
           className="w-full rounded-xl border-gray-300 focus:ring-purple-500 focus:border-purple-500"
           name="correo"
           placeholder="Ej: camila@sena.edu.co"
-          value={form.correo}    // Valor controlado desde form.correo
+          value={form.correo} // Valor controlado desde form.correo
           onChange={onChange}
         />
         {/* Mensaje de error específico para el campo correo */}
@@ -211,7 +204,4 @@ function FormularioContacto({ onAgregar }) {
       </div>
     </form>
   );
-}
-
-// Exportamos el componente para usarlo en App.jsx
-export default FormularioContacto;
+};
