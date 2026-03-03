@@ -102,6 +102,35 @@ function App() {
     }
   };
 
+  // Filtramos la lista original según el término de búsqueda
+const contactosFiltrados = contactos.filter((c) => {
+  const termino = busqueda.toLowerCase();
+
+  // Normalizamos texto a minúsculas para comparar sin problemas
+  const nombre = c.nombre.toLowerCase();
+  const correo = c.correo.toLowerCase();
+  const etiqueta = (c.etiqueta || "").toLowerCase();
+
+  // Incluimos el contacto si el término aparece en alguno de estos campos
+  return (
+    nombre.includes(termino) ||
+    correo.includes(termino) ||
+    etiqueta.includes(termino)
+  );
+});
+
+// Ordenamos los contactos filtrados por nombre
+const contactosOrdenados = [...contactosFiltrados].sort((a, b) => {
+  const nombreA = a.nombre.toLowerCase();
+  const nombreB = b.nombre.toLowerCase();
+
+  if (nombreA < nombreB) return ordenAsc ? -1 : 1;
+  if (nombreA > nombreB) return ordenAsc ? 1 : -1;
+  return 0;
+});
+
+
+
   // JSX que renderiza toda la aplicación
   return (
     <div className="min-h-screen bg-gray-50">
