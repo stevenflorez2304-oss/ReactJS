@@ -1,32 +1,11 @@
 {
   "contactos": [
     {
-      "id": null,
-      "nombre": "Steveen",
-      "telefono": "3137053041",
-      "correo": "nsajncjoacn@gmail.com",
-      "etiqueta": "estudiante"
-    },
-    {
-      "id": null,
-      "nombre": "Steveen",
-      "telefono": "3137053041",
-      "correo": "nsajncjoacn@gmail.com",
-      "etiqueta": "estudiante"
-    },
-    {
       "id": "a038",
       "nombre": "Steveen Mesa Blessd",
       "telefono": "3137053041",
       "correo": "nsajncjoacn@gmail.com",
       "etiqueta": "estudiantes"
-    },
-    {
-      "id": "8c2d",
-      "nombre": "Yeisons",
-      "telefono": "3132025694",
-      "correo": "asvcs<vs<",
-      "etiqueta": "Trabajador"
     }
   ]
 }
